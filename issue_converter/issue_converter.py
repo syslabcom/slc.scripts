@@ -23,46 +23,45 @@ else:
 
 newfilename = filename + '.out'
 
-newfile = open(newfilename, 'w')
-
 cnt = 0
 
 with open(filename, 'rb') as csvfile:
     csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
-    for line in csvreader:
-        items = line
-        if cnt == 0:
-            url = "Url"
-        else:
-            url = 'https://projects.syslab.com/issues/' + items[0]
+    with open(newfilename, 'wb') as newcsvfile:
+        csvwriter = csv.writer(newcsvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-        newitems = [url] + items
-        if (newitems[4] in ('Low (P4)', 'Very Low (P5)')):
-            newitems[4]='-1'
-        elif (newitems[4]=='Normal (P3)'):
-            newitems[4]='0'
-        elif (newitems[4] in ('High (P2)','Very High (P1)')):
-            newitems[4]='1'
-        else:
-            newitems[4]=newitems[4]
+        for line in csvreader:
+            items = line
+            if cnt == 0:
+                url = "Url"
+            else:
+                url = 'https://projects.syslab.com/issues/' + items[0]
 
-        if cnt>0 and newitems[6].strip() and newitems[6] not in SUPPORTERS:
-            print "User %s not found, dropping" % newitems[6]
-            newitems[6] = ""
+            newitems = [url] + items
+            if (newitems[4] in ('Low (P4)', 'Very Low (P5)')):
+                newitems[4]='-1'
+            elif (newitems[4]=='Normal (P3)'):
+                newitems[4]='0'
+            elif (newitems[4] in ('High (P2)','Very High (P1)')):
+                newitems[4]='1'
+            else:
+                newitems[4]=newitems[4]
 
-        # drop a few columns
-        del newitems[11]  # position
-        del newitems[7]  # Updated
-        del newitems[3]  # Status
-        del newitems[2]  # Tracker
+            if cnt>0 and newitems[6].strip() and newitems[6] not in SUPPORTERS:
+                print "User %s not found, dropping" % newitems[6]
+                newitems[6] = ""
 
-        newline = ','.join(newitems)
-        newfile.write(newline+'\n')
-        cnt += 1
+            # drop a few columns
+            del newitems[11]  # position
+            del newitems[7]  # Updated
+            del newitems[3]  # Status
+            del newitems[2]  # Tracker
 
+            csvwriter.writerow(newitems)
+            cnt += 1
 
 print "Done. File converted. Output in %s" % newfilename
-newfile.close()
+
 
 
 
