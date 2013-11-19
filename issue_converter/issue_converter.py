@@ -13,6 +13,7 @@
 import sys
 import csv
 
+SUPPORTERS = ('Wolfgang Thomas', 'Alexander Pilz', 'Lennart Regebro', 'Manuel Reinhardt', 'Jan-Carel Brand', 'Cillian de Roiste')
 if (len(sys.argv) == 1):
     filename = 'issues.csv'
 elif (len(sys.argv) == 2):
@@ -22,6 +23,7 @@ else:
     sys.exit(0)
 
 newfilename = filename + '.out'
+
 
 
 #    for row in csvreader:
@@ -48,7 +50,7 @@ with open(filename, 'rb') as csvfile:
             url = 'https://projects.syslab.com/issues/' + items[0]
 
         newitems = [url] + items
-        if (newitems[4]=='Low (P4)'):
+        if (newitems[4] in ('Low (P4)', 'Very Low (P5)')):
             newitems[4]='-1'
         elif (newitems[4]=='Normal (P3)'):
             newitems[4]='0'
@@ -57,8 +59,12 @@ with open(filename, 'rb') as csvfile:
         else:
             newitems[4]=newitems[4]
 
+        if cnt>0 and newitems[6].strip() and newitems[6] not in SUPPORTERS:
+            print "User %s not found, dropping" % newitems[6]
+            newitems[6] = ""
+
         # drop a few columns
-        #del newitems[11]  # position
+        del newitems[11]  # position
         del newitems[7]  # Updated
         del newitems[3]  # Status
         del newitems[2]  # Tracker
