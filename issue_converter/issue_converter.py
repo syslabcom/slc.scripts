@@ -1,14 +1,13 @@
 #!/usr/bin/env python
-### Input
+
+### Input example
 ###  #,Tracker,Status,Priority,Subject,Assignee,Updated,Category,Due date,Project
 ###  9107,Bug,New,Normal (P3),Cannot rearrange tiles on customise dashboard tiles dialog,"",2013-11-19 11:41 am,"","",StarDesk - 2013
 
-### Output
+### Corresponding output
 ### Url,#,Tracker,Status,Priority,Subject,Assignee,Updated,Category,Due date,Project
 ### https://projects.syslab.com/issues/9107,Bug,New,normal,Cannot rearrange tiles on customise dashboard tiles dialog,"",2013-11-19 11:41 am,"","",StarDesk - 2013
 
-# lies input filename, defaulte auf 'issues.csv'
-# generiere output filename aus inputfilename+'.out'
 
 import sys
 import csv
@@ -24,18 +23,6 @@ else:
 
 newfilename = filename + '.out'
 
-
-
-#    for row in csvreader:
-#        print ', '.join(row)
-
-
-# try:
-#     lines = open(filename, 'r').readlines()
-# except IOError:
-#     print "There is no file named '" + filename + "' in this directory."
-#     sys.exit(0)
-
 newfile = open(newfilename, 'w')
 
 cnt = 0
@@ -43,7 +30,7 @@ cnt = 0
 with open(filename, 'rb') as csvfile:
     csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
     for line in csvreader:
-        items = line #.strip().split(',')
+        items = line
         if cnt == 0:
             url = "Url"
         else:
@@ -80,14 +67,3 @@ newfile.close()
 
 
          
-#           # evtl namen umschreiben
-#             # priority umschreiben
-#               # Statt "Normal (P3)" schreib "normal"
-#                 # Statt "Low (P4)" schreib "low"
-#                   # Statt "High und very high (P1+2)" schreib "high"
-
-#                     newitems = [url] + items
-#                       newfile.write(','.join(newitems))
-
-#                       newfile.close()
-                      
