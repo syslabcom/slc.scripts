@@ -30,7 +30,11 @@ except IOError:
 newfile = open(newfilename, 'w')
 newlines = []
 
-for line in lines:
+newline = lines[0]
+newline = 'Url,' + newline
+newlines.append(newline)
+
+for line in lines[1:]:
     items = line.split(',')
     url = 'https://projects.syslab.com/issues/' + items[0]
     newitems = [url] + items
