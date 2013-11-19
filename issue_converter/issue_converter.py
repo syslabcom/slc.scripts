@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 ### Input
 ###  #,Tracker,Status,Priority,Subject,Assignee,Updated,Category,Due date,Project
 ###  9107,Bug,New,Normal (P3),Cannot rearrange tiles on customise dashboard tiles dialog,"",2013-11-19 11:41 am,"","",StarDesk - 2013
@@ -26,34 +27,39 @@ try:
 except IOError:
     print "There is no file named '" + filename + "' in this directory."
     sys.exit(0)
-    
+
 newfile = open(newfilename, 'w')
-newlines = []
 
-newline = lines[0]
-newline = 'Url,' + newline
-newlines.append(newline)
+cnt = 0
 
-for line in lines[1:]:
-    items = line.split(',')
-    url = 'https://projects.syslab.com/issues/' + items[0]
+for line in lines:
+    items = line.strip().split(',')
+    if cnt == 0:
+        url = "Url"
+    else:
+        url = 'https://projects.syslab.com/issues/' + items[0]
+
     newitems = [url] + items
     if (newitems[4]=='Low (P4)'):
-        newitems[4]='low'
+        newitems[4]='-1'
     elif (newitems[4]=='Normal (P3)'):
-        newitems[4]='normal'
+        newitems[4]='0'
     elif (newitems[4] in ('High (P2)','Very High (P1)')):
-        newitems[4]='high'
+        newitems[4]='1'
     else:
-        newitems[4]=newitems[4] + '<- Fehler beim parsen'
-    newline=newitems[0]
-    for i in range(len(newitems)-1):
-        newline = newline + ',' + newitems[i+1]
-    newlines.append(newline)
+        newitems[4]=newitems[4]
 
-for line in newlines:
-    newfile.write(line)
+    # drop a few columns
+    del newitems[11]  # position
+    del newitems[7]  # Updated
+    del newitems[3]  # Status
+    del newitems[2]  # Tracker
 
+    newline = ','.join(newitems)
+    newfile.write(newline+'\n')
+    cnt += 1
+
+print "Done. File converted. Output in %s" % newfilename
 newfile.close()
 
 
