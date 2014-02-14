@@ -7,6 +7,7 @@ import subprocess
 
 working_dir = os.getcwd() + "/"
 patterns_dir = os.getcwd() + '/Patterns/'
+server_port = 8081
 
 TPL_head = """/* Patterns bundle configuration.
 *
@@ -119,5 +120,5 @@ if __name__ == '__main__':              # set up pyramid
     config.add_route('set', '/set/{name}')
     config.add_view(set_patts, route_name='set')
     app = config.make_wsgi_app()
-    server = make_server('0.0.0.0', 8081, app)
+    server = make_server('0.0.0.0', server_port, app)
     server.serve_forever()
