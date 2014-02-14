@@ -89,7 +89,13 @@ CONFMAP = {
 
 
 def set_patts(request):
-    
+
+    if len(request.GET.keys())==0:
+        data = open('index.html','rb').read()
+        mResponse = Response(data)
+        mResponse.headers['content-type'] = 'text/html'
+        return mResponse
+           
     custom_config = "\n"                # string that contains all the patterns that are to be included
     
     for key in request.GET.keys():      # parse query string for patterns and add them
