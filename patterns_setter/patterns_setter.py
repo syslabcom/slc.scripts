@@ -4,10 +4,30 @@ from pyramid.response import Response
 import json
 import os
 import subprocess
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--host', dest='host', default='localhost')
+parser.add_argument('--port', dest='port', default=8080)
+args = parser.parse_args()
+
+host = args.host
+print "the host " + host + " has the type " + str(type(host))
+try:
+    port = int(args.port)
+    print 'the port is: ' + str(port)
+except ValueError:
+    print "Port number must be an integer!"
+    exit()
 working_dir = os.getcwd() + "/"
-patterns_dir = os.getcwd() + '/Patterns/'
-server_port = 8081
+
+config = open(working_dir + "patterns_setter.cfg",'rb')
+config.readline()
+patterns_dir = os.getcwd() + '/' + config.readline().strip()
+if patterns_dir[-1] != "/":
+    patterns_dir = patterns_dir + "/"
+
+print patterns_dir
 
 TPL_head = """/* Patterns bundle configuration.
 *
@@ -96,9 +116,9 @@ def set_patts(request):
         mResponse.headers['content-type'] = 'text/html'
         return mResponse
            
-    custom_config = "\n"                # string that contains all the patterns that are to be included
+    custom_config = "\n"                                 # string that contains all the patterns that are to be included
     
-    for key in request.GET.keys():      # parse query string for patterns and add them
+    for key in request.GET.keys():                       # parse query string for patterns and add them
         if key.startswith('pat/'):
             custom_config += '    "' + CONFMAP[key] + '",\n'
 
@@ -110,14 +130,14 @@ def set_patts(request):
     data.write(config)
     data.close()
 
-    os.chdir(patterns_dir)              # run make
+    os.chdir(patterns_dir)                              # run make
     subprocess.call(["make"])
     os.chdir(working_dir)
         
-    data = open(patterns_dir + 'build.js', 'rb').read() # create response with build.js as attachment
+    data = open(patterns_dir + 'bundle.js', 'rb').read() # create response with bundle.js as attachment
     mResponse = Response(data)
     mResponse.headers['content-type'] = 'application/javascript'
-    mResponse.headers['content-disposition'] = 'attachment;filename=build.js'    
+    mResponse.headers['content-disposition'] = 'attachment;filename=bundle.js'    
 
     return mResponse
 
@@ -126,5 +146,5 @@ if __name__ == '__main__':              # set up pyramid
     config.add_route('set', '/set/{name}')
     config.add_view(set_patts, route_name='set')
     app = config.make_wsgi_app()
-    server = make_server('0.0.0.0', server_port, app)
+    server = make_server(host, port, app)
     server.serve_forever()
