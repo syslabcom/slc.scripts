@@ -6,7 +6,7 @@ The URL HOST:PORT/set/patt will point to a html page where patterns can be selec
 
 Please perform the following steps:
 
-1. check out and go to the patterns_setter directory
+1. check out the repository and go to the patterns_setter directory
 2. create a virtualenv
 3. $ bin/easy_install pyramid
 4. check out a copy of Patternslib/Patterns in a location of your choice
