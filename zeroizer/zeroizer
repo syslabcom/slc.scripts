@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import fnmatch
 
 # parse cli arguments
 
@@ -9,7 +10,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('path')
 parser.add_argument('-r','--recursive', help='recurse into subdirectories', action="store_true")
 parser.add_argument('--dry-run', help='do not apply changes to the file system', action="store_true")
-parser.add_argument('-s','--minsize', help='only zeroize files that are at least as big as minsize in bytes', action="store")
+parser.add_argument('-s','--minsize', help='only zeroize files that are at least as big as MINSIZE in bytes', action="store")
+parser.add_argument('-m','--match', help='only zeroize files that match the glob MATCH', action="store")
 args = parser.parse_args()
 
 # check for invalid arguments and initialize variables
@@ -46,7 +48,8 @@ def zeroize(path):
             if args.dry_run:
                 print 'Zeroizing file: ' + path
             else:
-                print 'REALLY Zeroizing file: ' + path
-                open(path,'w').close()
+                if args.match == None or fnmatch.fnmatch(path,args.match):
+                    print 'REALLY Zeroizing file: ' + path
+                    open(path,'w').close()
 
 zeroize(path)
