@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('path')
 parser.add_argument('-r','--recursive', help='recurse into subdirectories', action="store_true")
 parser.add_argument('--dry-run', help='do not apply changes to the file system', action="store_true")
-parser.add_argument('-s','--minsize', help='only zeroize files that are at least as big as minsize', action="store")
+parser.add_argument('-s','--minsize', help='only zeroize files that are at least as big as minsize in bytes', action="store")
 args = parser.parse_args()
 
 # check for invalid arguments and initialize variables
