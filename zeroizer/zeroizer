@@ -1,0 +1,47 @@
+#!/usr/bin/python
+
+import argparse
+import os
+
+# parse cli arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('path')
+parser.add_argument('-r','--recursive', help='recurse into subdirectories', action="store_true")
+parser.add_argument('-s','--minsize', action="store")
+args = parser.parse_args()
+
+# check for invalid arguments and initialize variables
+
+try:
+    if args.minsize != None:
+        minsize = int(args.minsize)
+    else:
+        minsize = None
+except ValueError:
+    print 'Minsize must be an integer!'
+    exit(0)
+
+if args.path == '.':
+    path = os.getcwd()
+else:
+    if not args.path in os.listdir(os.getcwd()):
+        print "Path '" + args.path + "' not found!"
+        exit(0)
+    path = os.getcwd() + '/' + args.path
+
+if os.path.isdir(path) and (not args.recursive):
+    print "'" + args.path + "' is a directory. Please specify a file or use the '--recursive' option"
+    exit(0)
+
+# define and call recursive function
+def zeroize(path):
+    if os.path.isdir(path):
+        for p in os.listdir(path):
+            zeroize(path + '/' + p)
+    else:
+        if not minsize == None and minsize > os.path.getsize(path):
+            print "Not zeroizing file: " + path + ". Filesize " + str(os.path.getsize(path)) + " is smaller than the minimum of " + str(minsize) + "."
+        else:
+            print 'Zeroizing file: ' + path
+    
+zeroize(path)
