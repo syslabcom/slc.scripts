@@ -4,10 +4,12 @@ import argparse
 import os
 
 # parse cli arguments
+
 parser = argparse.ArgumentParser()
 parser.add_argument('path')
 parser.add_argument('-r','--recursive', help='recurse into subdirectories', action="store_true")
-parser.add_argument('-s','--minsize', action="store")
+parser.add_argument('--dry-run', help='do not apply changes to the file system', action="store_true")
+parser.add_argument('-s','--minsize', help='only zeroize files that are at least as big as minsize', action="store")
 args = parser.parse_args()
 
 # check for invalid arguments and initialize variables
@@ -34,14 +36,17 @@ if os.path.isdir(path) and (not args.recursive):
     exit(0)
 
 # define and call recursive function
+
 def zeroize(path):
     if os.path.isdir(path):
         for p in os.listdir(path):
             zeroize(path + '/' + p)
     else:
-        if not minsize == None and minsize > os.path.getsize(path):
-            print "Not zeroizing file: " + path + ". Filesize " + str(os.path.getsize(path)) + " is smaller than the minimum of " + str(minsize) + "."
-        else:
-            print 'Zeroizing file: ' + path
-    
+        if minsize == None or minsize <= os.path.getsize(path):
+            if args.dry_run:
+                print 'Zeroizing file: ' + path
+            else:
+                print 'REALLY Zeroizing file: ' + path
+                open(path,'w').close()
+
 zeroize(path)
